@@ -78,16 +78,23 @@ jobs:
       # Central Portal API로 업로드 (USER_MANAGED: 수동 검토 후 배포)
       - name: Upload to Maven Central
         run: |
+          echo "=== Token prefix (first 8 chars) ==="
+          echo "$CENTRAL_TOKEN" | cut -c1-8
+          echo "=== Token length ==="
+          echo -n "$CENTRAL_TOKEN" | wc -c
           HTTP_CODE=$(curl --verbose --show-error \
             --http1.1 \
             --write-out "%{http_code}" \
             --output response.txt \
+            --dump-header response-headers.txt \
             --request POST \
-            --header "Authorization: Bearer ${{ secrets.CENTRAL_TOKEN }}" \
+            --header "Authorization: Bearer $CENTRAL_TOKEN" \
             --form bundle=@bundle.zip \
             "https://central.sonatype.com/api/v1/publisher/upload?publishingType=USER_MANAGED&name=secure-prompt-${{ github.ref_name }}")
           echo "HTTP Status: $HTTP_CODE"
-          echo "Response body:"
+          echo "=== Response Headers ==="
+          cat response-headers.txt
+          echo "=== Response Body ==="
           cat response.txt
           if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
             echo "Upload failed with HTTP $HTTP_CODE"
@@ -96,6 +103,8 @@ jobs:
           DEPLOYMENT_ID=$(cat response.txt)
           echo "Deployment ID: $DEPLOYMENT_ID"
           echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_ENV
+        env:
+          CENTRAL_TOKEN: ${{ secrets.CENTRAL_TOKEN }}
 
       - name: Summary
         run: |
