@@ -2,9 +2,11 @@
 
 > Spring Boot 애플리케이션에서 LLM Prompt Injection 공격을 자동으로 탐지·차단하는 오픈소스 보안 라이브러리
 
+[![CI](https://github.com/zjdtm/secure-prompt-spring-boot-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/zjdtm/secure-prompt-spring-boot-starter/actions/workflows/ci.yml)
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-green.svg)](https://spring.io/projects/spring-boot)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/zjdtm/secure-prompt-spring-boot-starter)](https://github.com/zjdtm/secure-prompt-spring-boot-starter/releases)
 
 ---
 
