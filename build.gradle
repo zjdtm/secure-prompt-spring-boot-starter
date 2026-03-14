@@ -2,9 +2,11 @@ plugins {
     id 'java-library'
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'maven-publish'
+    id 'signing'
 }
 
-group = 'com.secureprompt'
+group = 'io.github.zjdtm'
 version = '1.0.0'
 description = 'Spring Boot LLM Prompt Injection Defense Library'
 
@@ -12,6 +14,9 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+    // Maven Central 필수: sources jar, javadoc jar 자동 생성
+    withSourcesJar()
+    withJavadocJar()
 }
 
 configurations {
@@ -60,4 +65,67 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// ─────────────────────────────────────────────
+// Maven Central 배포 설정
+// ─────────────────────────────────────────────
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            groupId    = 'io.github.zjdtm'
+            artifactId = 'secure-prompt-spring-boot-starter'
+            version    = '1.0.0'
+
+            pom {
+                name        = 'SecurePrompt Spring Boot Starter'
+                description = 'Spring Boot LLM Prompt Injection Defense Library'
+                url         = 'https://github.com/zjdtm/secure-prompt-spring-boot-starter'
+
+                licenses {
+                    license {
+                        name = 'Apache License 2.0'
+                        url  = 'https://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id    = 'zjdtm'
+                        name  = 'Young Hyun'
+                        email = 'syh05247@naver.com'
+                    }
+                }
+
+                scm {
+                    connection          = 'scm:git:git://github.com/zjdtm/secure-prompt-spring-boot-starter.git'
+                    developerConnection = 'scm:git:ssh://github.com/zjdtm/secure-prompt-spring-boot-starter.git'
+                    url                 = 'https://github.com/zjdtm/secure-prompt-spring-boot-starter'
+                }
+            }
+        }
+    }
+
+    // 로컬 스테이징 디렉토리 (빌드 시 서명된 아티팩트 생성 위치)
+    repositories {
+        maven {
+            name = 'staging'
+            url  = layout.buildDirectory.dir('staging')
+        }
+    }
+}
+
+// GPG 서명 설정
+signing {
+    def signingKey        = System.getenv('GPG_PRIVATE_KEY')
+    def signingPassphrase = System.getenv('GPG_PASSPHRASE')
+
+    if (signingKey && signingPassphrase) {
+        useInMemoryPgpKeys(signingKey, signingPassphrase)
+    }
+
+    sign publishing.publications.mavenJava
 }
