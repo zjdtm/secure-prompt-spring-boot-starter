@@ -31,6 +31,27 @@ jobs:
       - name: Build & Test
         run: ./gradlew test
 
+      # GitHub Secrets 등록 여부 사전 확인
+      - name: Verify secrets
+        run: |
+          if [ -z "$GPG_PRIVATE_KEY" ]; then
+            echo "❌ Secret 'GPG_PRIVATE_KEY' is not set"
+            exit 1
+          fi
+          if [ -z "$GPG_PASSPHRASE" ]; then
+            echo "❌ Secret 'GPG_PASSPHRASE' is not set"
+            exit 1
+          fi
+          if [ -z "$CENTRAL_TOKEN" ]; then
+            echo "❌ Secret 'CENTRAL_TOKEN' is not set"
+            exit 1
+          fi
+          echo "✅ All required secrets are present"
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE:  ${{ secrets.GPG_PASSPHRASE }}
+          CENTRAL_TOKEN:   ${{ secrets.CENTRAL_TOKEN }}
+
       # 서명된 아티팩트를 build/staging 디렉토리에 생성
       - name: Publish to staging
         run: ./gradlew publishMavenJavaPublicationToStagingRepository

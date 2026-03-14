@@ -119,13 +119,15 @@ publishing {
 }
 
 // GPG 서명 설정
+// 환경변수가 있을 때만 서명 활성화 (로컬 빌드는 서명 불필요)
+def gpgKey        = System.getenv('GPG_PRIVATE_KEY')
+def gpgPassphrase = System.getenv('GPG_PASSPHRASE')
+
 signing {
-    def signingKey        = System.getenv('GPG_PRIVATE_KEY')
-    def signingPassphrase = System.getenv('GPG_PASSPHRASE')
+    required { gpgKey && gpgPassphrase }
 
-    if (signingKey && signingPassphrase) {
-        useInMemoryPgpKeys(signingKey, signingPassphrase)
+    if (gpgKey && gpgPassphrase) {
+        useInMemoryPgpKeys(gpgKey, gpgPassphrase)
+        sign publishing.publications.mavenJava
     }
-
-    sign publishing.publications.mavenJava
 }
