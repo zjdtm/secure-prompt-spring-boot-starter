@@ -1,0 +1,63 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.secureprompt'
+version = '1.0.0'
+description = 'Spring Boot LLM Prompt Injection Defense Library'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Spring Boot 플러그인이 실행 가능한 JAR를 만들지 않도록 설정 (라이브러리)
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    // Spring Boot Core
+    api 'org.springframework.boot:spring-boot-starter'
+    api 'org.springframework.boot:spring-boot-starter-aop'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    // Cache
+    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
+
+    // Logging
+    api 'org.slf4j:slf4j-api'
+
+    // JPA (optional - DB 없이도 동작)
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

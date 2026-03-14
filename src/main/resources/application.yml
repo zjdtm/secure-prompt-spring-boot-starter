@@ -1,0 +1,17 @@
+secure-prompt:
+  enabled: true
+  threshold: 70         # Risk score threshold (0-100). Prompts >= threshold are blocked.
+  block-mode: true      # true = throw exception, false = log only
+  log-blocked-prompts: false  # Whether to log hashed prompt content
+
+  # Optional: Add custom patterns
+  # custom-patterns:
+  #   - name: my_secret_pattern
+  #     regex: "reveal\\s+my\\s+secrets?"
+  #     severity: HIGH
+
+  # Optional: Exclude specific endpoints
+  # excluded-endpoints:
+  #   - /api/public/**
+  #   - /health
+  #   - /metrics
