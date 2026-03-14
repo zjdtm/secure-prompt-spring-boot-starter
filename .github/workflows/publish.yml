@@ -79,6 +79,7 @@ jobs:
       - name: Upload to Maven Central
         run: |
           HTTP_CODE=$(curl --verbose --show-error \
+            --http1.1 \
             --write-out "%{http_code}" \
             --output response.txt \
             --request POST \
